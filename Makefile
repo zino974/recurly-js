@@ -41,7 +41,11 @@ endif
 node_modules: package.json
 	@npm install --silent
 
+# make version version=x.x.x
+version:
+	@npm version $(version)
+
 clean:
 	@rm -rf node_modules build
 
-.PHONY: test clean
+.PHONY: test clean version

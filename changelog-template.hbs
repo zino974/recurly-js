@@ -1,0 +1,18 @@
+## Recurly.js CHANGELOG
+
+{{#each releases}}
+  ### Version [{{title}}]({{href}})
+
+  {{#each merges}}
+    * {{message}} [#{{id}}][{{id}}]
+  {{/each}}
+
+{{/each}}
+
+* Full rewrite for Billing Info tokenization
+
+{{#each releases}}
+  {{#each merges}}
+    [{{id}}]: {{commitHref}}
+  {{/each}}
+{{/each}}
