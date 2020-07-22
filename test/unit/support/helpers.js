@@ -61,6 +61,7 @@ export function stubBraintree () {
         create
       },
       paypal: { create },
+      venmo:  { tokenize: () => Promise.resolve() },
       dataCollector: { create }
     };
   });
