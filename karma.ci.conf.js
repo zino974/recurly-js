@@ -1,4 +1,5 @@
 const branchName = require('current-git-branch');
+const browserstack = require('browserstack-local');
 const staticConfig = require('./karma.conf').staticConfig;
 const {
   capabilities: browserStackCapabilities,
@@ -8,12 +9,27 @@ const {
 const {
   BROWSER = 'chrome',
   REPORT_COVERAGE = false,
-  TRAVIS_BUILD_NUMBER
+  TRAVIS_BUILD_NUMBER,
+  BROWSERSTACK_ACCESS_KEY
 } = process.env;
 
 const BROWSER_STACK_CAPABILITY = browserStackCapabilities[BROWSER];
+const TUNNEL_IDENTIFIER = `${Math.round(Math.random() * 100)}-${Date.now()}`;
 
-function runner (config) {
+const server = require('./test/server');
+
+if (BROWSER_STACK_CAPABILITY) {
+  const browserstackLocal = new browserstack.Local();
+  browserstackLocal.start({
+    key: BROWSERSTACK_ACCESS_KEY,
+    forceLocal: true,
+    localIdentifier: TUNNEL_IDENTIFIER
+  }, () => {
+    console.log(`Started BrowserStackLocal tunnel with id ${TUNNEL_IDENTIFIER}`);
+  });
+}
+
+module.exports = function runner (config) {
   const cfg = Object.assign({}, staticConfig, {
     reporters: ['mocha'],
     logLevel: config.LOG_INFO,
@@ -31,27 +47,23 @@ function runner (config) {
       project,
       build: `${TRAVIS_BUILD_NUMBER || `local unit [${branchName()}]`}`,
       autoAcceptAlerts: true,
-      forceLocal: true,
+      // forceLocal: true,
       'browserstack.local': true,
       'browserstack.debug': true,
       'browserstack.console': 'verbose',
       'browserstack.networkLogs': true,
       captureTimeout: 1200,
-      localIdentifier: `${Math.round(Math.random() * 100)}-${Date.now()}`,
+      startTunnel: false,
+      tunnelIdentifier: TUNNEL_IDENTIFIER,
       pollingTimeout: 4000,
       timeout: 1200
     };
     cfg.reporters.push('BrowserStack');
   }
 
-  console.log(cfg);
-
+  console.log('Karma configuration', cfg);
   config.set(cfg);
 };
-
-const server = require('./test/server');
-
-module.exports = runner;
 
 function customLaunchers () {
   const launchers = {
