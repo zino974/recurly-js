@@ -3,7 +3,7 @@ branches:
 language: node_js
 sudo: false
 node_js:
-  - 12
+  - 14
 cache:
   directories:
     - node_modules
@@ -11,100 +11,116 @@ before_install:
   - bash .travis-pre.sh
 env:
   global:
-    - secure: U0dvpEjblZ3i+knw/cOWWgLvHUz/L9vN7Kv5VKDJ5ydvLy/1Tcueokp4hL7jhu4zwzlJto6MdFG1uKXr97zs+ETV9clYtRFBF/4YlAGs8sQcvPu4BOyH9pUJ77tnNR2ZX62wik9UFl6LmJOBpCjVkp+kh6it44QJm4Zv03Yx47w=
-    - secure: wrAUnHRseJQrRUqoKWCY/Sw8Wd21kssvYiQ26HpjNc8Q3+uQY6IAMwyyyRRbr65nwHnYrk6KJfSEHYgmQbMeie/3+LseXbDGd9BmWAvujI2ZXNPjFxhSA4gmBvVtT/57fZaCdc8pAnGLb8OwiBSgQN0UJ55Kr59Yjhi3ehBZd1Q=
     - secure: yIrHdkLhWtO37N24cRU71PK80zvkPzlJ1Jm+1MS3C6/icgJ8At1N/UgpBdxuBs1tlJm1O7Ahk+/MhpGWlspx9tCF7Hzw9Rj0xpKhqsvM155zgH582xNPwNebiCr/tmsH2/ELgFBBgC9sCW5luzeKx9nyuedGA4fmD2fK5Phc5EE=
     - secure: fGRo+RTDcnWNnYjSgDtHIRFrkXDxYzFrF0JaGs73ZunLXoYbJ5FclaM9+wjw8BbGEEsVbyBYMSHyy8E2Y0VRggal/XlFkKaqQQHSDVuslcM5YdAkcLC8jFSuSzP32X6cY+L9fKszFVaO+vn84lXwiQnqgpOHAtN32/eB//5Ky1s=
     - secure: m9ylFoxkeoOjBTYi7IF93Rqq95uJkL95onYJc5k1Xo2wNCDrAfvZ8cv6o70Qr/lpWqvgxPueDP6VXjxKAmSueQnx9uGKyigFCpMH4zl7+7n7l4382Eeyex2uE6kCh/lA4EjkmE3QdIW6l8YCGJD1IoHqVSKPZ67ZSdnapTgGPYQ=
+    - secure: Vyedcxqn04Or/NZLOeK+pii6YulrSNQrDHCPmoXQh9IVeefOF4NujL/d7+PQuKiRUED3AOw6Ziib6oDzpFamTXXl5SJ4xeKS6V9NpHXunLUlLCuv37siQ+96WvN8r5IHs0BJV/hVKCFbk7IosEdnK1OAx6KyVpYctNdf4qWa4O4=
 script: make test-unit-ci
 jobs:
   include:
-    - stage: Lint
-      name: ESLint
+    - stage: Check
+      name: Lint
       script: make lint
-
-    - stage: Typecheck
-      name: Check type definitions
+    - stage: Check
+      name: Types
       script: make test-types
 
     - stage: Unit Test
       name: Coverage
       addons:
         chrome: stable
-      env: BROWSER=chrome_headless REPORT_COVERAGE=true
+      env: BROWSER=ChromeHeadlessCI REPORT_COVERAGE=true
       script: make test-unit-cov-ci
     - name: Chrome
-      env: BROWSER=chrome
-    - name: Firefox
-      env: BROWSER=firefox
-    - name: Safari
-      env: BROWSER=safari
-    - name: Edge
-      env: BROWSER=edge
-    - name: Internet Explorer 11
-      env: BROWSER=ie_11
-    - name: iOS 12
-      env: BROWSER=ios_12
-    - name: iOS 13
-      env: BROWSER=ios_13
-    - name: Android 9
-      env: BROWSER=android_9
-    - name: Android 8
-      env: BROWSER=android_8
-    - name: Android 7
-      env: BROWSER=android_7
-    - name: Electron
-      env: BROWSER=electron
+      env: BROWSER=Chrome
+      addons:
+        chrome: stable
       services:
         - xvfb
+    - name: Firefox
+      env: BROWSER=Firefox
+      addons:
+        firefox: latest
+      services:
+        - xvfb
+    - name: Safari
+      env: BROWSER=BrowserStackSafari
+    - name: Edge
+      env: BROWSER=BrowserStackEdge
+    - name: Internet Explorer 11
+      env: BROWSER=BrowserStackIe11
+    - name: iOS 14
+      env: BROWSER=BrowserStackIos14
+    - name: iOS 13
+      env: BROWSER=BrowserStackIos13
+    - name: Android 11
+      env: BROWSER=BrowserStackAndroid11
+    - name: Android 10
+      env: BROWSER=BrowserStackAndroid10
+    - name: Android 9
+      env: BROWSER=BrowserStackAndroid9
+    - name: Electron
+      env: BROWSER=Electron
+      addons:
+        chrome: stable
+      services:
+        - xvfb
+    - name: react-recurly
+      if: type != pull_request
+      env: RECURLY_JS_SHA=$TRAVIS_COMMIT
+      script:
+        - mkdir -p vendor && cd vendor
+        - git clone https://github.com/recurly/react-recurly.git && cd react-recurly
+        - make test
 
     - &e2e
       stage: End-to-End Test
       name: Chrome
-      env: BROWSER=chrome
+      env: BROWSER=BrowserStackChrome
       script: make test-e2e-ci
     - <<: *e2e
       name: Firefox
-      env: BROWSER=firefox
+      env: BROWSER=BrowserStackFirefox
     - <<: *e2e
       name: Safari
-      env: BROWSER=safari
+      env: BROWSER=BrowserStackSafari
     - <<: *e2e
       name: Edge
-      env: BROWSER=edge
+      env: BROWSER=BrowserStackEdge
     - <<: *e2e
       name: Internet Explorer 11
-      env: BROWSER=ie_11
+      env: BROWSER=BrowserStackIe11
+    - <<: *e2e
+      name: iOS 14
+      env: BROWSER=BrowserStackIos14
     - <<: *e2e
       name: iOS 13
-      env: BROWSER=ios_13 API_PROXY=http://bs-local.com:9877/api-proxy
+      env: BROWSER=BrowserStackIos13
     - <<: *e2e
-      name: iOS 12
-      env: BROWSER=ios_12 API_PROXY=http://bs-local.com:9877/api-proxy
+      name: Android 11
+      env: BROWSER=BrowserStackAndroid11
+    - <<: *e2e
+      name: Android 10
+      env: BROWSER=BrowserStackAndroid10
     - <<: *e2e
       name: Android 9
-      env: BROWSER=android_9 API_PROXY=http://bs-local.com:9877/api-proxy
-    - <<: *e2e
-      name: Android 8
-      env: BROWSER=android_8 API_PROXY=http://bs-local.com:9877/api-proxy
-    - <<: *e2e
-      name: Android 7
-      env: BROWSER=android_7 API_PROXY=http://bs-local.com:9877/api-proxy
+      env: BROWSER=BrowserStackAndroid9
     - <<: *e2e
       name: Electron
-      env: BROWSER=electron API_PROXY=http://bs-local.com:9877/api-proxy
+      env: BROWSER=Electron
+      addons:
+        chrome: stable
       services:
         - xvfb
 
     - stage: Publish
       name: Publish Artifacts
       addons:
-        artifacts:
-          paths:
-            - build
-          target_paths:
-            - artifacts/$TRAVIS_COMMIT
-          s3_region: us-west-1
-          permissions: public-read
-      env: ARTIFACTS_BUCKET=recurly-js
-      script: make build
+        apt:
+          packages:
+            - google-cloud-sdk
+      script:
+        - openssl aes-256-cbc -K $encrypted_7a8336da16e8_key -iv $encrypted_7a8336da16e8_iv -in gcs.json.enc -out gcs.json -d
+        - gcloud auth activate-service-account --key-file=gcs.json
+        - make build
+        - gsutil cp -Z build/* $GCS_BUCKET_URL/$TRAVIS_COMMIT/

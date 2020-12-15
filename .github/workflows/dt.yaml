@@ -2,7 +2,7 @@ name: DefinitelyTyped
 on:
   release:
     types:
-      - created
+      - published
 
 jobs:
   DefinitelyTyped:
@@ -25,10 +25,12 @@ jobs:
           git config user.password ${{ secrets.DEFINITELY_TYPED_PR_GITHUB_ACCESS_TOKEN }}
           git remote set-url origin https://github.com/dbrudner/DefinitelyTyped
           git fetch --unshallow -p origin
+          git remote add upstream https://github.com/DefinitelyTyped/DefinitelyTyped.git
+          git pull upstream master
       - name: Add DefinitelyTyped header
         run: |
           version=$(cat recurly-js/package.json | jq '.version' -r | sed -ne 's/^\([0-9]*\.[0-9]*\).*/\1/p')
-          echo "// Type definitions for non-npm package recurly__recurly-js $version
+          echo "// Type definitions for non-npm package @recurly/recurly-js $version
           // Project: https://github.com/recurly/recurly-js
           // Definitions by: Dave Brudner <https://github.com/dbrudner>
           //                 Chris Rogers <https://github.com/chrissrogers>

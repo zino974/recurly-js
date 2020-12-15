@@ -1,17 +1,17 @@
 module.exports = {
   projectName: 'Recurly.js',
   capabilities: {
-    bs_chrome: {
+    BrowserStackChrome: {
       browserName: 'Chrome',
       os: 'OS X',
       osVersion: 'Catalina'
     },
-    bs_firefox: {
+    BrowserStackFirefox: {
       browserName: 'Firefox',
       os: 'OS X',
       osVersion: 'Catalina'
     },
-    bs_safari: {
+    BrowserStackSafari: {
       browserName: 'Safari',
       os: 'OS X',
       osVersion: 'Catalina',
@@ -20,7 +20,7 @@ module.exports = {
       }
     },
 
-    bs_edge: {
+    BrowserStackEdge: {
       browserName: 'Edge',
       browserVersion: '18.0',
       os: 'Windows',
@@ -29,7 +29,7 @@ module.exports = {
         enablePopups: true
       }
     },
-    bs_ie_11: {
+    BrowserStackIe11: {
       browserName: 'IE',
       browserVersion: '11.0',
       os: 'Windows',
@@ -41,38 +41,35 @@ module.exports = {
       }
     },
 
-    bs_ios_13: {
-      deviceName: 'iPhone XS',
+    BrowserStackIos14: {
+      deviceName: 'iPhone 11',
+      os: 'ios',
+      osVersion: '14',
+      realMobile: true
+    },
+    BrowserStackIos13: {
+      deviceName: 'iPhone 11',
       os: 'ios',
       osVersion: '13',
       realMobile: true
     },
-    bs_ios_12: {
-      deviceName: 'iPhone XS',
-      os: 'ios',
-      osVersion: '12.4',
+
+    BrowserStackAndroid11: {
+      deviceName: 'Google Pixel 4',
+      os: 'android',
+      osVersion: '11.0',
       realMobile: true
     },
-
-    bs_android_9: {
-      browserName: 'android',
+    BrowserStackAndroid10: {
+      deviceName: 'Samsung Galaxy S20',
+      os: 'android',
+      osVersion: '10.0',
+      realMobile: true
+    },
+    BrowserStackAndroid9: {
       deviceName: 'Google Pixel 3',
       os: 'android',
       osVersion: '9.0',
-      realMobile: true
-    },
-    bs_android_8: {
-      browserName: 'android',
-      deviceName: 'Samsung Galaxy Note 9',
-      os: 'android',
-      osVersion: '8.1',
-      realMobile: true
-    },
-    bs_android_7: {
-      browserName: 'android',
-      deviceName: 'Google Pixel',
-      os: 'android',
-      osVersion: '7.1',
       realMobile: true
     }
   }

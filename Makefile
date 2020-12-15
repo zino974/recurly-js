@@ -34,8 +34,8 @@ test: test-unit test-e2e
 test-ci: test-unit-ci test-e2e-ci
 test-unit: build build/test-unit.js
 	@$(karma) karma.conf.js
-test-unit-debug: build build/test.js
-	BROWSER=ChromeDebug $(KARMA) start karma.conf.js
+test-unit-debug: build build/test-unit.js
+	BROWSER=ChromeDebug $(karma) karma.conf.js
 test-unit-ci: build build/test-unit.js
 	@$(karma) karma.ci.conf.js
 test-unit-cov-ci: export REPORT_COVERAGE = true
@@ -57,10 +57,10 @@ lint-fix: build
 	@$(eslint) --fix
 
 node_modules: package.json
-	@npm install --silent
+	@npm install --silent --no-audit
 
 clean:
-	@rm -rf node_modules build
+	@rm -rf node_modules build tmp
 
 .PHONY: server server-http
 .PHONY: test-ci test-unit test-unit-ci test-unit-cov-ci test-e2e test-e2e-ci test-types

@@ -35,7 +35,7 @@ describe('WorldpayStrategy', function () {
     beforeEach(function () {
       const { recurly } = this;
       this.sessionId = 'test-worldpay-session-id';
-      this.bin = '411111';
+      this.number = '4111111111111111';
       this.jwt = 'test-preflight-jwt';
       this.simulatePreflightResponse = () => {
         // Stubs expected message format from Worldpay DDC
@@ -49,22 +49,22 @@ describe('WorldpayStrategy', function () {
     });
 
     it('returns a promise', function (done) {
-      const { recurly, Strategy, bin, jwt, simulatePreflightResponse } = this;
-      const retValue = Strategy.preflight({ recurly, bin, jwt }).then(() => done());
+      const { recurly, Strategy, number, jwt, simulatePreflightResponse } = this;
+      const retValue = Strategy.preflight({ recurly, number, jwt }).then(() => done());
       assert(retValue instanceof Promise);
       simulatePreflightResponse();
     });
 
     it('constructs a frame to collect a session id', function (done) {
-      const { recurly, Strategy, bin, jwt, simulatePreflightResponse } = this;
+      const { recurly, Strategy, number, jwt, simulatePreflightResponse } = this;
 
-      Strategy.preflight({ recurly, bin, jwt }).then(() => done());
+      Strategy.preflight({ recurly, number, jwt }).then(() => done());
 
       assert(recurly.Frame.calledOnce);
       assert(recurly.Frame.calledWithMatch({
         path: '/risk/data_collector',
         payload: {
-          bin,
+          bin: number.substr(0,6),
           jwt,
           redirect_url: 'https://secure-test.worldpay.com/shopper/3ds/ddc.html'
         },
@@ -77,9 +77,9 @@ describe('WorldpayStrategy', function () {
     });
 
     it('resolves when a session id is received', function (done) {
-      const { recurly, Strategy, bin, jwt, sessionId, simulatePreflightResponse } = this;
+      const { recurly, Strategy, number, jwt, sessionId, simulatePreflightResponse } = this;
 
-      Strategy.preflight({ recurly, bin, jwt }).then(preflightResponse => {
+      Strategy.preflight({ recurly, number, jwt }).then(preflightResponse => {
         assert.strictEqual(preflightResponse.session_id, sessionId);
         done();
       });
